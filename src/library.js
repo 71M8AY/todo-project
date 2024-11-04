@@ -14,10 +14,15 @@ export const library = (function Library() {
     libraryList.splice(index, 1);
   };
 
+  const rename = (itemName, newName) => {
+    const index = libraryList.findIndex((item) => item.name == itemName);
+    libraryList[index].name = newName;
+  };
+
   const displayLibraryList = () => {
     let nameArray = libraryList.map((prj) => prj.name);
     return nameArray;
   };
 
-  return { add, remove, displayLibraryList };
+  return { add, remove, displayLibraryList, rename };
 })();
