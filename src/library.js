@@ -1,11 +1,13 @@
+import { Project, Notes } from "./projects";
+
 export const library = (function Library() {
   let libraryList = [];
 
-  const add = (item) => {
+  const addProject = (item) => {
     libraryList.push(item);
   };
 
-  const remove = (itemName) => {
+  const removeProject = (itemName) => {
     const index = libraryList.findIndex((item) => item.name == itemName);
     if (index < 0) {
       throw "No such project exists in the library!";
@@ -14,15 +16,15 @@ export const library = (function Library() {
     libraryList.splice(index, 1);
   };
 
-  const rename = (itemName, newName) => {
-    const index = libraryList.findIndex((item) => item.name == itemName);
-    libraryList[index].name = newName;
-  };
+  //   const renameProject = (itemName, newName) => {
+  //     const index = libraryList.findIndex((item) => item.name == itemName);
+  //     libraryList[index].name = newName;
+  //   };
 
   const displayLibraryList = () => {
     let nameArray = libraryList.map((prj) => prj.name);
     return nameArray;
   };
 
-  return { add, remove, displayLibraryList, rename };
+  return { addProject, removeProject, displayLibraryList };
 })();
