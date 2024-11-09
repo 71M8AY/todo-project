@@ -159,6 +159,7 @@ body {
 }
 
 .add img {
+  cursor: pointer;
   width: 35px;
 }
 
@@ -172,6 +173,7 @@ body {
 }
 
 .projects > div {
+  user-select: none;
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
@@ -180,6 +182,7 @@ body {
 }
 
 .projects p {
+  cursor: pointer;
   white-space: nowrap;
   border: 1px solid var(--rich-black);
   font-weight: 600;
@@ -197,6 +200,7 @@ body {
 }
 
 .projects img {
+  cursor: pointer;
   width: clamp(15px, 1.5vw, 25px);
 }
 /* ------------------------------- */
@@ -264,13 +268,25 @@ body {
   height: fit-content;
 }
 
-.notes > div {
+.notes > div > div:nth-child(2) {
   background-color: rgba(0, 166, 232, 0.1);
   border: 2px solid var(--rich-black);
   border-radius: 10px;
   margin-bottom: 4px;
   width: max(200px, 18%);
   height: fit-content;
+}
+
+.noteActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+}
+
+.notes img {
+  width: 15px;
 }
 
 .noteTitle,
@@ -324,6 +340,31 @@ body {
   border-radius: 0 0 8px 0;
   background-color: red;
   border-left: 2px solid var(--rich-black);
+}
+
+.priority select {
+  width: 100%;
+  height: 100%;
+  /* border: 1px solid var(--rich-black); */
+  border-radius: 0 0 8px 0;
+  background-color: red;
+  cursor: pointer;
+}
+
+.priority select > option:first-child {
+  height: 60px;
+  background-color: red;
+}
+
+.priority select > option:nth-child(2) {
+  background-color: yellow;
+}
+
+.priority select > option:nth-child(3) {
+  background-color: greenyellow;
+}
+.priority select > option:last-child {
+  background-color: antiquewhite;
 }
 
 .dueDate {
