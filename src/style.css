@@ -150,6 +150,7 @@ body {
 }
 
 .add {
+  position: relative;
   font-size: 1.3rem;
   font-weight: 600;
   display: flex;
@@ -164,7 +165,6 @@ body {
 }
 
 .projects {
-  position: relative;
   padding: 20px 0;
   display: flex;
   flex-direction: column;
@@ -202,6 +202,23 @@ body {
 .projects img {
   cursor: pointer;
   width: clamp(15px, 1.5vw, 25px);
+}
+
+#addProject {
+  width: clamp(190px, 13.5%, 300px);
+  padding: 5px;
+  border-radius: 10px;
+  top: 195px;
+  left: 15px;
+}
+
+#addProject > input {
+  width: 100%;
+}
+
+#addProject img {
+  margin-left: 5px;
+  width: 15px;
 }
 /* ------------------------------- */
 
