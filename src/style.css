@@ -195,6 +195,8 @@ body {
 }
 
 .actions {
+  display: flex;
+  flex-wrap: wrap;
   align-self: center;
   gap: clamp(5px, 2vw, 10px);
 }
@@ -212,11 +214,16 @@ body {
   left: 15px;
 }
 
-#addProject > input {
+#addProject > form > input {
   width: 100%;
 }
 
 #addProject img {
+  margin-left: 5px;
+  width: 15px;
+}
+
+#addProject input[type="image"] {
   margin-left: 5px;
   width: 15px;
 }
