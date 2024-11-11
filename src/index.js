@@ -1,8 +1,11 @@
 import { library } from "./library";
 import { Project } from "./projectClass";
+import { Note } from "./noteClass";
+import { SubNote } from "./subNoteClass";
 import "./style.css";
 import editImg from "./edit.svg";
 import deleteImg from "./delete.svg";
+import tickImg from "./tick.svg";
 
 // VARIABLES
 const projectDialog = document.querySelector("#addProject");
@@ -15,8 +18,6 @@ const projectDialogAccept = document.querySelector(
 );
 const projectAddButton = document.querySelector(".add > img");
 const projectText = document.querySelector(".add > p");
-const projectEditButton = document.querySelector(".actions > img:first-child");
-const projectDeleteButton = document.querySelector(".actions > img:last-child");
 
 // PROJECT DIV
 
@@ -38,10 +39,51 @@ function addProjectDiv() {
       alt: "Delete",
     })
   );
+
+  const projectDivDialog = document.createElement("dialog");
+  projectDivDialog.appendChild(
+    Object.assign(document.createElement("input"), { type: "text" })
+  );
+  projectDivDialog.appendChild(
+    Object.assign(document.createElement("img"), {
+      src: tickImg,
+      alt: "Accept",
+    })
+  );
+  projectDivDialog.appendChild(
+    Object.assign(document.createElement("img"), {
+      src: deleteImg,
+      alt: "Cancel",
+    })
+  );
+
   projectDiv.appendChild(projectActionsDiv);
   libraryDiv.appendChild(projectDiv);
   projectDiv.firstChild.textContent =
     library.displayLibraryList()[library.displayLibraryList().length - 1];
+  projectDiv.append(projectDivDialog);
+
+  projectActionsDiv.lastChild.addEventListener("click", () => {
+    library.removeProject(projectDiv.firstChild.textContent);
+    libraryDiv.removeChild(projectDiv);
+  });
+
+  projectActionsDiv.firstChild.addEventListener("click", () => {
+    projectDivDialog.showModal();
+  });
+
+  projectDivDialog.children[2].addEventListener("click", () => {
+    projectDivDialog.close();
+  });
+
+  projectDivDialog.children[1].addEventListener("click", () => {
+    projectDivDialog.close(projectDivDialog.children[0].value);
+    projectDivDialog.children[0].value = "";
+    library
+      .targetProject(projectDiv.firstChild.textContent)
+      .renameProject(projectDivDialog.returnValue);
+    projectDiv.firstChild.textContent = projectDivDialog.returnValue;
+  });
 }
 
 // EVENT LISTENERS
@@ -58,6 +100,7 @@ projectDialogCancel.addEventListener("click", () => {
 
 projectDialogAccept.addEventListener("click", () => {
   projectDialog.close(projectDialogInput.value);
+  projectDialogInput.value = "";
   projectText.textContent = "Add Project";
   library.addProject(new Project(projectDialog.returnValue));
   addProjectDiv();
