@@ -33,6 +33,14 @@
   outline: none;
 }
 
+.display {
+  display: none !important;
+}
+
+.visibility {
+  visibility: hidden !important;
+}
+
 body {
   height: 100dvh;
   width: clamp(900px, 100vw, 100%);
@@ -173,6 +181,7 @@ body {
 }
 
 .projects > div {
+  position: relative;
   user-select: none;
   display: flex;
   flex-grow: 1;
@@ -206,27 +215,60 @@ body {
   width: clamp(15px, 1.5vw, 25px);
 }
 
-#addProject {
-  width: clamp(190px, 13.5%, 300px);
-  padding: 5px;
-  border-radius: 10px;
-  top: 195px;
-  left: 15px;
+dialog:modal {
+  overlay: none;
 }
 
-#addProject > form > input {
+.addProject {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   width: 100%;
+  height: 30px;
+  top: 2px;
 }
 
-#addProject img {
-  margin-left: 5px;
-  width: 15px;
+.addProject > input {
+  padding: 2px 5px;
+  border-radius: 10px;
+  border: 2px solid var(--rich-black);
+  width: 100%;
+  height: 100%;
 }
 
-#addProject input[type="image"] {
-  margin-left: 5px;
-  width: 15px;
+.addProject img {
+  width: 18px;
 }
+
+.addProjectActions {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.renameProject {
+  background-color: var(--white);
+  position: absolute;
+  display: flex;
+  height: 100%;
+  gap: 5px;
+}
+
+.renameProject input {
+  border: 2px solid var(--rich-black);
+  padding-left: 10px;
+  border-radius: 10px;
+  width: 69%;
+  height: 100%;
+}
+
+.renameActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 /* ------------------------------- */
 
 /* Main content  */

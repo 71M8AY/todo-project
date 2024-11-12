@@ -8,13 +8,13 @@ import deleteImg from "./delete.svg";
 import tickImg from "./tick.svg";
 
 // VARIABLES
-const projectDialog = document.querySelector("#addProject");
-const projectDialogInput = document.querySelector("#addProject > form > input");
+const projectDialog = document.querySelector(".addProject");
+const projectDialogInput = document.querySelector(".addProject > input");
 const projectDialogCancel = document.querySelector(
-  "#addProject > form > div > img:first-child"
+  ".addProjectActions > img:last-child"
 );
 const projectDialogAccept = document.querySelector(
-  "#addProject >  form > div > input:last-child"
+  ".addProjectActions > img:first-child"
 );
 const projectAddButton = document.querySelector(".add > img");
 const projectText = document.querySelector(".add > p");
@@ -40,22 +40,27 @@ function addProjectDiv() {
     })
   );
 
-  const projectDivDialog = document.createElement("dialog");
+  const projectDivDialog = document.createElement("div");
+  projectDivDialog.classList.add("display", "renameProject");
   projectDivDialog.appendChild(
     Object.assign(document.createElement("input"), { type: "text" })
   );
-  projectDivDialog.appendChild(
+  const projectDivDialogActions = document.createElement("div");
+  projectDivDialogActions.className = "renameActions";
+
+  projectDivDialogActions.appendChild(
     Object.assign(document.createElement("img"), {
       src: tickImg,
       alt: "Accept",
     })
   );
-  projectDivDialog.appendChild(
+  projectDivDialogActions.appendChild(
     Object.assign(document.createElement("img"), {
       src: deleteImg,
       alt: "Cancel",
     })
   );
+  projectDivDialog.appendChild(projectDivDialogActions);
 
   projectDiv.appendChild(projectActionsDiv);
   libraryDiv.appendChild(projectDiv);
@@ -69,39 +74,48 @@ function addProjectDiv() {
   });
 
   projectActionsDiv.firstChild.addEventListener("click", () => {
-    projectDivDialog.showModal();
+    projectDivDialog.classList.toggle("display");
+    projectDivDialog.children[0].focus();
   });
 
-  projectDivDialog.children[2].addEventListener("click", () => {
-    projectDivDialog.close();
+  projectDivDialogActions.lastChild.addEventListener("click", () => {
+    projectDivDialog.classList.toggle("display");
   });
 
-  projectDivDialog.children[1].addEventListener("click", () => {
-    projectDivDialog.close(projectDivDialog.children[0].value);
-    projectDivDialog.children[0].value = "";
+  projectDivDialogActions.firstChild.addEventListener("click", () => {
+    projectDivDialog.classList.toggle("display");
     library
       .targetProject(projectDiv.firstChild.textContent)
-      .renameProject(projectDivDialog.returnValue);
-    projectDiv.firstChild.textContent = projectDivDialog.returnValue;
+      .renameProject(projectDivDialog.children[0].value);
+
+    projectDiv.firstChild.textContent = projectDivDialog.children[0].value;
+    projectDivDialog.children[0].value = "";
   });
 }
 
 // EVENT LISTENERS
+projectAddButton.classList.add("visibility");
+projectAddButton.classList.toggle("visibility");
 
 projectAddButton.addEventListener("click", () => {
   projectText.textContent = "";
-  projectDialog.showModal();
+  projectDialog.classList.toggle("display");
+  projectAddButton.classList.toggle("visibility");
+  projectDialogInput.focus();
 });
 
 projectDialogCancel.addEventListener("click", () => {
   projectText.textContent = "Add Project";
-  projectDialog.close();
+  projectDialogInput.value = "";
+  projectDialog.classList.toggle("display");
+  projectAddButton.classList.toggle("visibility");
 });
 
 projectDialogAccept.addEventListener("click", () => {
-  projectDialog.close(projectDialogInput.value);
+  library.addProject(new Project(projectDialogInput.value));
+  addProjectDiv();
   projectDialogInput.value = "";
   projectText.textContent = "Add Project";
-  library.addProject(new Project(projectDialog.returnValue));
-  addProjectDiv();
+  projectDialog.classList.toggle("display");
+  projectAddButton.classList.toggle("visibility");
 });

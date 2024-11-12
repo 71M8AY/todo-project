@@ -25,15 +25,13 @@
           <div class="add">
             <img src="./plus.svg" alt="" />
             <p>Add a Project</p>
-            <dialog id="addProject">
-              <form method="dialog">
-                <input type="text" name="submit" />
-                <div>
-                  <img src="./delete.svg" alt="Cancel" />
-                  <input type="image" src="./tick.svg" alt="Accept" />
-                </div>
-              </form>
-            </dialog>
+            <div class="display addProject">
+              <input type="text" />
+              <div class="addProjectActions">
+                <img src="./tick.svg" alt="Accept" />
+                <img src="./delete.svg" alt="Cancel" />
+              </div>
+            </div>
           </div>
           <div class="projects"></div>
         </div>
