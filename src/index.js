@@ -8,6 +8,8 @@ import deleteImg from "./delete.svg";
 import tickImg from "./tick.svg";
 
 // VARIABLES
+let activeProject = "";
+const noteDiv = document.querySelector(".notes");
 const noteDialogBtn = document.querySelector("#addNoteBtn");
 const noteDialog = document.querySelector(".addNote");
 const projectDialog = document.querySelector(".addProject");
@@ -70,6 +72,13 @@ function addProjectDiv() {
     library.displayLibraryList()[library.displayLibraryList().length - 1];
   projectDiv.append(projectDivDialog);
 
+  projectDiv.addEventListener("click", () => {
+    activeProject = projectDiv.firstChild.textContent;
+    noteDiv.textContent = "";
+    populate(activeProject);
+    noteDialogBtn.classList.remove("visibility");
+  });
+
   projectActionsDiv.lastChild.addEventListener("click", () => {
     library.removeProject(projectDiv.firstChild.textContent);
     libraryDiv.removeChild(projectDiv);
@@ -98,7 +107,7 @@ function addProjectDiv() {
 // NOTE DIV
 
 function addNoteDiv(title, desc, due, prio) {
-  const noteDiv = document.createElement("div");
+  const noteAddDiv = document.createElement("div");
   const noteActionsDiv = document.createElement("div");
   noteActionsDiv.className = "noteActions";
   noteActionsDiv.appendChild(
@@ -114,7 +123,9 @@ function addNoteDiv(title, desc, due, prio) {
     })
   );
 
-  noteDiv.appendChild(noteActionsDiv);
+  noteAddDiv.appendChild(noteActionsDiv);
+
+  noteActionsDiv.children[0].addEventListener("click", () => {});
 
   const noteContentDiv = document.createElement("div");
   for (let i = 0; i < 3; i++) {
@@ -154,9 +165,24 @@ function addNoteDiv(title, desc, due, prio) {
 
   noteContentDiv.children[2].appendChild(dueDate);
   noteContentDiv.children[2].appendChild(priority);
+
+  noteAddDiv.appendChild(noteContentDiv);
+
+  noteDiv.appendChild(noteAddDiv);
+}
+
+// POPULATE FUNCTION
+function populate(divName) {
+  for (const item of library.targetProject(divName).notes) {
+    addNoteDiv(item.title, item.desc, item._due, item.prio);
+  }
 }
 
 // EVENT LISTENERS
+window.addEventListener("load", () => {
+  noteDialogBtn.classList.add("visibility");
+});
+
 projectAddButton.classList.add("visibility");
 projectAddButton.classList.toggle("visibility");
 
@@ -176,6 +202,7 @@ projectDialogCancel.addEventListener("click", () => {
 
 projectDialogAccept.addEventListener("click", () => {
   library.addProject(new Project(projectDialogInput.value));
+  activeProject = projectDialogInput.value;
   addProjectDiv();
   projectDialogInput.value = "";
   projectText.textContent = "Add Project";
@@ -183,7 +210,49 @@ projectDialogAccept.addEventListener("click", () => {
   projectAddButton.classList.toggle("visibility");
 });
 
+// NOTE DIALOG
+
+noteDialog.children[0].children[3].addEventListener("change", () => {
+  noteDialog.children[0].children[3].style.backgroundColor =
+    noteDialog.children[0].children[3].value;
+});
+
 noteDialogBtn.addEventListener("click", (e) => {
   e.preventDefault();
   noteDialog.showModal();
 });
+
+noteDialog.children[0].children[4].children[1].addEventListener(
+  "click",
+  (e) => {
+    e.preventDefault();
+    noteDialog.close();
+  }
+);
+
+noteDialog.children[0].children[4].children[0].addEventListener(
+  "click",
+  (e) => {
+    e.preventDefault();
+    noteDialog.close([
+      noteDialog.children[0].children[0].value,
+      noteDialog.children[0].children[1].value,
+      noteDialog.children[0].children[2].children[1].value,
+      noteDialog.children[0].children[3].value,
+    ]);
+    noteDialog.children[0].children[0].value = "";
+    noteDialog.children[0].children[1].value = "";
+    noteDialog.children[0].children[2].children[1].value = "";
+    noteDialog.children[0].children[3].value = "";
+
+    const tempArr = noteDialog.returnValue.split(",");
+    library
+      .targetProject(activeProject)
+      .addNote(new Note(tempArr[0], tempArr[1], tempArr[2], tempArr[3]));
+
+    const lastNote = library
+      .targetProject(activeProject)
+      .targetNote(tempArr[0]);
+    addNoteDiv(lastNote.title, lastNote.desc, lastNote._due, lastNote.prio);
+  }
+);

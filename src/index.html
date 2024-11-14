@@ -50,17 +50,16 @@
                 id="noteDescription"
                 placeholder="Description..."
                 rows="5"
-                required
               ></textarea>
               <div class="date">
                 <p>Due Date:</p>
-                <input type="date" id="dueDate" max="2027-01-01" required />
+                <input type="date" id="dueDate" max="2027-01-01" />
               </div>
-              <select id="priority" required>
+              <select id="priority">
                 <option value="red"></option>
                 <option value="yellow"></option>
                 <option value="green"></option>
-                <option value="white"></option>
+                <option value="white" selected></option>
               </select>
               <div class="dialogActions">
                 <input type="image" src="tick.svg" />

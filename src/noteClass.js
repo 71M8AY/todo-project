@@ -1,10 +1,18 @@
 export class Note {
-  constructor(title, desc, prio = 3, due = "Indefinite") {
+  constructor(title, desc, due, prio) {
     this.title = title;
     this.desc = desc;
     this.prio = prio;
     this.due = due;
     this.subNotes = [];
+  }
+
+  set due(newDueDate) {
+    if (newDueDate === "") {
+      this._due = "Indefinite";
+    } else {
+      this._due = newDueDate;
+    }
   }
 
   addSubNote(subNote) {
@@ -32,6 +40,10 @@ export class Note {
   }
 
   changeDue(newDue) {
-    this.due = newDue;
+    if (newDue === "") {
+      this._due = "Indefinite";
+    } else {
+      this._due = newDue;
+    }
   }
 }
