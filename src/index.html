@@ -39,9 +39,35 @@
       <div class="projectContent">
         <div class="info">
           <div class="noteSearch">
+            <img src="plus.svg" alt="Add Note" id="addNoteBtn" />
             <input class="noteSearchField" type="search" />
             <img src="./search.svg" alt="" />
           </div>
+          <dialog class="addNote">
+            <form method="dialog">
+              <input type="text" id="title" placeholder="Title..." required />
+              <textarea
+                id="noteDescription"
+                placeholder="Description..."
+                rows="5"
+                required
+              ></textarea>
+              <div class="date">
+                <p>Due Date:</p>
+                <input type="date" id="dueDate" max="2027-01-01" required />
+              </div>
+              <select id="priority" required>
+                <option value="red"></option>
+                <option value="yellow"></option>
+                <option value="green"></option>
+                <option value="white"></option>
+              </select>
+              <div class="dialogActions">
+                <input type="image" src="tick.svg" />
+                <input type="image" src="delete.svg" />
+              </div>
+            </form>
+          </dialog>
         </div>
         <div class="notes">
           <div>

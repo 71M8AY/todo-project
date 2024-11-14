@@ -286,6 +286,7 @@ dialog:modal {
 /* Top part  */
 
 .info {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -304,10 +305,102 @@ dialog:modal {
 }
 
 .noteSearch img {
+  cursor: pointer;
   border: 2px solid var(--picton-blue);
   background-color: white;
   border-radius: 50%;
   padding: 5px;
+}
+
+#addNoteBtn {
+  border: none;
+  padding: 0;
+  width: 40px;
+}
+
+.addNote {
+  background-color: var(--prussian-blue);
+  padding: 10px;
+  top: 40%;
+  left: 40%;
+  border-radius: 10px;
+  width: 250px;
+  height: 260px;
+  overflow: hidden;
+}
+
+.addNote > form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.addNote input[type="image"] {
+  border: 2px solid var(--rich-black);
+  background-color: white;
+  border-radius: 50%;
+  width: 30px;
+  padding: 3px;
+}
+
+.addNote input[type="text"] {
+  font-weight: 600;
+  padding-left: 10px;
+  border-radius: 10px;
+  height: 25px;
+}
+
+.addNote textarea {
+  padding: 2px;
+  border-radius: 5px;
+}
+
+.date {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: white;
+}
+
+.date p {
+  font-weight: 600;
+}
+
+.addNote input[type="date"] {
+  border-radius: 10px;
+  width: 150px;
+  height: 25px;
+  padding-left: 10px;
+  align-self: center;
+}
+
+.addNote select {
+  align-self: center;
+  height: 30px;
+  width: 80px;
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+}
+
+.addNote select > option:first-child {
+  height: 60px;
+  background-color: red;
+}
+
+.addNote select > option:nth-child(2) {
+  background-color: yellow;
+}
+
+.addNote select > option:nth-child(3) {
+  background-color: greenyellow;
+}
+.addNote select > option:last-child {
+  background-color: antiquewhite;
 }
 
 .noteSearchField {
@@ -325,7 +418,6 @@ dialog:modal {
 
 .notes {
   display: flex;
-  justify-content: space-between;
   overflow: scroll;
   overflow-x: hidden;
   flex-wrap: wrap;
@@ -334,13 +426,17 @@ dialog:modal {
   height: fit-content;
 }
 
+.notes > div {
+  width: 200px;
+}
+
 .notes > div > div:nth-child(2) {
   background-color: rgba(0, 166, 232, 0.1);
   border: 2px solid var(--rich-black);
   border-radius: 10px;
   margin-bottom: 4px;
-  width: max(200px, 18%);
   height: fit-content;
+  width: 200px;
 }
 
 .noteActions {
@@ -386,12 +482,11 @@ dialog:modal {
 }
 
 .extra {
-  padding: 5px;
-  display: none;
+  overflow: hidden;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: fit-content;
+  height: 0px;
 }
 
 .description {

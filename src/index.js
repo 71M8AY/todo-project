@@ -8,6 +8,8 @@ import deleteImg from "./delete.svg";
 import tickImg from "./tick.svg";
 
 // VARIABLES
+const noteDialogBtn = document.querySelector("#addNoteBtn");
+const noteDialog = document.querySelector(".addNote");
 const projectDialog = document.querySelector(".addProject");
 const projectDialogInput = document.querySelector(".addProject > input");
 const projectDialogCancel = document.querySelector(
@@ -93,6 +95,67 @@ function addProjectDiv() {
   });
 }
 
+// NOTE DIV
+
+function addNoteDiv(title, desc, due, prio) {
+  const noteDiv = document.createElement("div");
+  const noteActionsDiv = document.createElement("div");
+  noteActionsDiv.className = "noteActions";
+  noteActionsDiv.appendChild(
+    Object.assign(document.createElement("img"), {
+      src: editImg,
+      alt: "Edit",
+    })
+  );
+  noteActionsDiv.appendChild(
+    Object.assign(document.createElement("img"), {
+      src: deleteImg,
+      alt: "Delete",
+    })
+  );
+
+  noteDiv.appendChild(noteActionsDiv);
+
+  const noteContentDiv = document.createElement("div");
+  for (let i = 0; i < 3; i++) {
+    noteContentDiv.appendChild(document.createElement("div"));
+  }
+
+  noteContentDiv.children[0].className = "noteTitle";
+  noteContentDiv.children[1].className = "extra";
+  noteContentDiv.children[2].className = "noteFooter";
+
+  noteContentDiv.children[0].appendChild(document.createElement("p"));
+  noteContentDiv.children[0].firstChild.textContent = title;
+
+  const description = document.createElement("div");
+  description.className = "description";
+  description.appendChild(document.createElement("p"));
+  description.firstChild.textContent = desc;
+  noteContentDiv.children[1].appendChild(description);
+  noteContentDiv.children[1].appendChild(
+    Object.assign(document.createElement("div"), { class: "extraList" })
+  );
+
+  const dueDate = document.createElement("div");
+  dueDate.className = "dueDate";
+  dueDate.textContent = due;
+  const priority = document.createElement("div");
+  priority.className = "priority";
+  priority.value = prio;
+  priority.appendChild(document.createElement("select"));
+  for (let i = 0; i < 4; i++) {
+    priority.firstChild.appendChild(document.createElement("option"));
+  }
+  priority.firstChild.children[0].value = "red";
+  priority.firstChild.children[1].value = "yellow";
+  priority.firstChild.children[2].value = "green";
+  priority.firstChild.children[3].value = "white";
+
+  noteContentDiv.children[2].appendChild(dueDate);
+  noteContentDiv.children[2].appendChild(priority);
+}
+
 // EVENT LISTENERS
 projectAddButton.classList.add("visibility");
 projectAddButton.classList.toggle("visibility");
@@ -118,4 +181,9 @@ projectDialogAccept.addEventListener("click", () => {
   projectText.textContent = "Add Project";
   projectDialog.classList.toggle("display");
   projectAddButton.classList.toggle("visibility");
+});
+
+noteDialogBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  noteDialog.showModal();
 });
