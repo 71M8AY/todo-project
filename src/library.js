@@ -10,19 +10,13 @@ export const library = (function Library() {
   };
 
   const removeProject = (itemName) => {
-    const index = libraryList.findIndex((item) => item.name == itemName);
-    if (index < 0) {
-      throw "No such project exists in the library!";
-    }
+    const index = libraryList.findIndex((item) => item.name === itemName);
     console.log(index);
     libraryList.splice(index, 1);
   };
 
   const targetProject = (projectName) => {
     const index = libraryList.findIndex((item) => item.name === projectName);
-    if (index < 0) {
-      throw "No such project exists in the library!";
-    }
     return libraryList[index];
   };
 

@@ -7,7 +7,8 @@ import editImg from "./edit.svg";
 import deleteImg from "./delete.svg";
 import tickImg from "./tick.svg";
 
-// VARIABLES
+// VARIABLE
+const check = /^[a-zA-Z0-9_]/;
 let activeProject = "";
 const noteDiv = document.querySelector(".notes");
 const noteDialogBtn = document.querySelector("#addNoteBtn");
@@ -79,9 +80,14 @@ function addProjectDiv() {
     noteDialogBtn.classList.remove("visibility");
   });
 
-  projectActionsDiv.lastChild.addEventListener("click", () => {
+  projectActionsDiv.lastChild.addEventListener("click", (e) => {
+    e.stopPropagation();
     library.removeProject(projectDiv.firstChild.textContent);
     libraryDiv.removeChild(projectDiv);
+    if (library.displayLibraryList().length === 0) {
+      activeProject = "";
+      noteDialogBtn.classList.add("visibility");
+    }
   });
 
   projectActionsDiv.firstChild.addEventListener("click", () => {
@@ -101,6 +107,7 @@ function addProjectDiv() {
 
     projectDiv.firstChild.textContent = projectDivDialog.children[0].value;
     projectDivDialog.children[0].value = "";
+    console.log(library.displayLibraryList());
   });
 }
 
@@ -163,6 +170,10 @@ function addNoteDiv(title, desc, due, prio) {
   priority.firstChild.children[2].value = "green";
   priority.firstChild.children[3].value = "white";
 
+  priority.firstChild.addEventListener("change", () => {
+    priority.firstChild.style.backgroundColor = priority.firstChild.value;
+  });
+
   noteContentDiv.children[2].appendChild(dueDate);
   noteContentDiv.children[2].appendChild(priority);
 
@@ -173,7 +184,7 @@ function addNoteDiv(title, desc, due, prio) {
 
 // POPULATE FUNCTION
 function populate(divName) {
-  for (const item of library.targetProject(divName).notes) {
+  for (let item of library.targetProject(divName).notes) {
     addNoteDiv(item.title, item.desc, item._due, item.prio);
   }
 }
@@ -201,13 +212,16 @@ projectDialogCancel.addEventListener("click", () => {
 });
 
 projectDialogAccept.addEventListener("click", () => {
-  library.addProject(new Project(projectDialogInput.value));
-  activeProject = projectDialogInput.value;
-  addProjectDiv();
-  projectDialogInput.value = "";
-  projectText.textContent = "Add Project";
-  projectDialog.classList.toggle("display");
-  projectAddButton.classList.toggle("visibility");
+  if (check.test(projectDialogInput.value)) {
+    library.addProject(new Project(projectDialogInput.value));
+    activeProject = projectDialogInput.value;
+    addProjectDiv();
+    projectDialogInput.value = "";
+    projectText.textContent = "Add Project";
+    projectDialog.classList.toggle("display");
+    projectAddButton.classList.toggle("visibility");
+  }
+  projectDialogInput.focus();
 });
 
 // NOTE DIALOG
@@ -220,6 +234,7 @@ noteDialog.children[0].children[3].addEventListener("change", () => {
 noteDialogBtn.addEventListener("click", (e) => {
   e.preventDefault();
   noteDialog.showModal();
+  noteDialog.children[0].children[0].focus();
 });
 
 noteDialog.children[0].children[4].children[1].addEventListener(
@@ -234,25 +249,28 @@ noteDialog.children[0].children[4].children[0].addEventListener(
   "click",
   (e) => {
     e.preventDefault();
-    noteDialog.close([
-      noteDialog.children[0].children[0].value,
-      noteDialog.children[0].children[1].value,
-      noteDialog.children[0].children[2].children[1].value,
-      noteDialog.children[0].children[3].value,
-    ]);
-    noteDialog.children[0].children[0].value = "";
-    noteDialog.children[0].children[1].value = "";
-    noteDialog.children[0].children[2].children[1].value = "";
-    noteDialog.children[0].children[3].value = "";
+    if (check.test(noteDialog.children[0].children[0].value)) {
+      noteDialog.close([
+        noteDialog.children[0].children[0].value,
+        noteDialog.children[0].children[1].value,
+        noteDialog.children[0].children[2].children[1].value,
+        noteDialog.children[0].children[3].value,
+      ]);
+      noteDialog.children[0].children[0].value = "";
+      noteDialog.children[0].children[1].value = "";
+      noteDialog.children[0].children[2].children[1].value = "";
+      noteDialog.children[0].children[3].value = "";
 
-    const tempArr = noteDialog.returnValue.split(",");
-    library
-      .targetProject(activeProject)
-      .addNote(new Note(tempArr[0], tempArr[1], tempArr[2], tempArr[3]));
+      const tempArr = noteDialog.returnValue.split(",");
+      library
+        .targetProject(activeProject)
+        .addNote(new Note(tempArr[0], tempArr[1], tempArr[2], tempArr[3]));
 
-    const lastNote = library
-      .targetProject(activeProject)
-      .targetNote(tempArr[0]);
-    addNoteDiv(lastNote.title, lastNote.desc, lastNote._due, lastNote.prio);
+      const lastNote = library
+        .targetProject(activeProject)
+        .targetNote(tempArr[0]);
+      addNoteDiv(lastNote.title, lastNote.desc, lastNote._due, lastNote.prio);
+    }
+    noteDialog.children[0].children[0].focus();
   }
 );
