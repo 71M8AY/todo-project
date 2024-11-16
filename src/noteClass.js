@@ -1,3 +1,5 @@
+import { formatter } from "/src/formatter.js";
+
 export class Note {
   constructor(title, desc, due, prio) {
     this.title = title;
@@ -11,7 +13,7 @@ export class Note {
     if (newDueDate === "") {
       this._due = "Indefinite";
     } else {
-      this._due = newDueDate;
+      this._due = formatter(newDueDate);
     }
   }
 
