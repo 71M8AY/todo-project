@@ -41,6 +41,15 @@
   visibility: hidden !important;
 }
 
+.expanded {
+  padding: 5px;
+  height: fit-content !important;
+}
+
+.footerBorder {
+  border-top: 2px solid var(--rich-black);
+}
+
 body {
   background-color: var(--prussian-blue);
   height: 100vh;
@@ -461,6 +470,12 @@ dialog:modal {
   cursor: pointer;
 }
 
+.noteActions > div {
+  width: 15px;
+  margin-right: auto;
+  cursor: pointer;
+}
+
 .noteActions > img:first-child {
   margin-right: auto;
 }
@@ -509,6 +524,8 @@ dialog:modal {
 
 .description {
   text-align: center;
+  word-break: break-all;
+  white-space: normal;
 }
 
 .extraList {

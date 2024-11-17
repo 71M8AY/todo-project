@@ -8,6 +8,7 @@ import editImg from "./edit.svg";
 import deleteImg from "./delete.svg";
 import tickImg from "./tick.svg";
 import expandImg from "./expand.svg";
+import shrinkImg from "./shrink.svg";
 
 // VARIABLE
 const check = /^[a-zA-Z0-9_]/;
@@ -168,12 +169,23 @@ function addNoteDiv(title, desc, due, prio) {
 
   const noteActionsDiv = document.createElement("div");
   noteActionsDiv.className = "noteActions";
-  noteActionsDiv.appendChild(
+  noteActionsDiv.appendChild(document.createElement("div"));
+  noteActionsDiv.firstChild.appendChild(
     Object.assign(document.createElement("img"), {
       src: expandImg,
       alt: "Expand",
     })
   );
+  noteActionsDiv.children[0].appendChild(
+    Object.assign(document.createElement("img"), {
+      src: shrinkImg,
+      alt: "Shrink",
+    })
+  );
+  noteActionsDiv.children[0].children[0].classList.add("display");
+  noteActionsDiv.children[0].children[1].classList.add("display");
+  noteActionsDiv.children[0].children[0].classList.toggle("display");
+
   noteActionsDiv.appendChild(
     Object.assign(document.createElement("img"), {
       src: editImg,
@@ -188,6 +200,20 @@ function addNoteDiv(title, desc, due, prio) {
   );
 
   noteAddDiv.appendChild(noteActionsDiv);
+
+  noteActionsDiv.children[0].children[0].addEventListener("click", () => {
+    noteContentDiv.children[1].classList.toggle("expanded");
+    noteContentDiv.children[2].classList.toggle("footerBorder");
+    noteActionsDiv.children[0].children[0].classList.toggle("display");
+    noteActionsDiv.children[0].children[1].classList.toggle("display");
+  });
+
+  noteActionsDiv.children[0].children[1].addEventListener("click", () => {
+    noteContentDiv.children[1].classList.toggle("expanded");
+    noteContentDiv.children[2].classList.toggle("footerBorder");
+    noteActionsDiv.children[0].children[0].classList.toggle("display");
+    noteActionsDiv.children[0].children[1].classList.toggle("display");
+  });
 
   noteActionsDiv.children[1].addEventListener("click", () => {
     noteDialogDiv.showModal();
@@ -205,7 +231,11 @@ function addNoteDiv(title, desc, due, prio) {
 
   noteContentDiv.children[0].className = "noteTitle";
   noteContentDiv.children[1].className = "extra";
+  noteContentDiv.children[1].classList.add("expanded");
+  noteContentDiv.children[1].classList.toggle("expanded");
   noteContentDiv.children[2].className = "noteFooter";
+  noteContentDiv.children[2].classList.add("footerBorder");
+  noteContentDiv.children[2].classList.toggle("footerBorder");
 
   noteContentDiv.children[0].appendChild(document.createElement("p"));
   noteContentDiv.children[0].firstChild.textContent = title;
@@ -333,7 +363,9 @@ noteDialog.children[0].children[4].children[0].addEventListener(
       noteDialog.children[0].children[0].value = "";
       noteDialog.children[0].children[1].value = "";
       noteDialog.children[0].children[2].children[1].value = "";
-      noteDialog.children[0].children[3].value = "";
+      noteDialog.children[0].children[3].value = "white";
+      noteDialog.children[0].children[3].style.backgroundColor =
+        noteDialog.children[0].children[3].value;
 
       const tempArr = noteDialog.returnValue.split(",");
       library
@@ -351,5 +383,6 @@ noteDialog.children[0].children[4].children[0].addEventListener(
       );
     }
     noteDialog.children[0].children[0].focus();
+    console.log(library.targetProject(activeProject).notes);
   }
 );
