@@ -42,7 +42,8 @@
 }
 
 body {
-  height: 100dvh;
+  background-color: var(--prussian-blue);
+  height: 100vh;
   width: clamp(900px, 100vw, 100%);
 }
 
@@ -51,7 +52,7 @@ body {
 /* ------------------------------- */
 .wrapper {
   padding: max(10px, 0.5%);
-  height: 100%;
+  height: max(100dvh, 100%);
   width: 100%;
   background-color: var(--prussian-blue);
   display: grid;

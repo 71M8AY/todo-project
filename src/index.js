@@ -234,8 +234,18 @@ function addNoteDiv(title, desc, due, prio) {
   priority.firstChild.children[2].value = "green";
   priority.firstChild.children[3].value = "white";
 
+  priority.firstChild.style.backgroundColor = prio;
+
   priority.firstChild.addEventListener("change", () => {
     priority.firstChild.style.backgroundColor = priority.firstChild.value;
+  });
+
+  priority.firstChild.addEventListener("change", () => {
+    library
+      .targetProject(activeProject)
+      .targetNote(title)
+      .changePrio(priority.firstChild.value);
+    console.log(library.targetProject(activeProject).notes);
   });
 
   noteContentDiv.children[2].appendChild(dueDate);
