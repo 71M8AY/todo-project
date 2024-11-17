@@ -13,7 +13,7 @@ export class Note {
     if (newDueDate === "") {
       this._due = "Indefinite";
     } else {
-      this._due = formatter(newDueDate);
+      this._due = newDueDate;
     }
   }
 

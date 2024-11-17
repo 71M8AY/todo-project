@@ -1,5 +1,8 @@
 export function formatter(text) {
   text += "";
+  if (text === "Indefinite") {
+    return text;
+  }
   let arr = text.split("-");
   switch (arr[1]) {
     case "01":

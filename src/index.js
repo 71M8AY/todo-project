@@ -2,10 +2,12 @@ import { library } from "./library";
 import { Project } from "./projectClass";
 import { Note } from "./noteClass";
 import { SubNote } from "./subNoteClass";
+import { formatter } from "./formatter";
 import "./style.css";
 import editImg from "./edit.svg";
 import deleteImg from "./delete.svg";
 import tickImg from "./tick.svg";
+import expandImg from "./expand.svg";
 
 // VARIABLE
 const check = /^[a-zA-Z0-9_]/;
@@ -115,8 +117,63 @@ function addProjectDiv() {
 
 function addNoteDiv(title, desc, due, prio) {
   const noteAddDiv = document.createElement("div");
+
+  const noteDialogDiv = document.createElement("dialog");
+  noteDialogDiv.className = "addNote";
+  noteDialogDiv.classList.add("renameNote");
+  noteDialogDiv.appendChild(
+    Object.assign(document.createElement("form"), { method: "dialog" })
+  );
+  noteDialogDiv.children[0].appendChild(
+    Object.assign(document.createElement("input"), {
+      type: "text",
+      value: title,
+    })
+  );
+  noteDialogDiv.children[0].appendChild(
+    Object.assign(document.createElement("textarea"), {
+      textContent: desc,
+      rows: 5,
+    })
+  );
+  noteDialogDiv.children[0].appendChild(document.createElement("div"));
+  noteDialogDiv.children[0].children[2].className = "date";
+  noteDialogDiv.children[0].children[2].appendChild(
+    Object.assign(document.createElement("p"), { textContent: "Due Date:" })
+  );
+  noteDialogDiv.children[0].children[2].appendChild(
+    Object.assign(document.createElement("input"), {
+      type: "date",
+      value: library.targetProject(activeProject).targetNote(title)._due,
+      max: "2027-01-01",
+    })
+  );
+  const renameNoteActions = document.createElement("div");
+  renameNoteActions.className = "dialogActions";
+  renameNoteActions.classList.add("renameNoteActions");
+  renameNoteActions.appendChild(
+    Object.assign(document.createElement("input"), {
+      type: "image",
+      src: tickImg,
+    })
+  );
+  renameNoteActions.appendChild(
+    Object.assign(document.createElement("input"), {
+      type: "image",
+      src: deleteImg,
+    })
+  );
+  noteDialogDiv.appendChild(renameNoteActions);
+  noteDiv.appendChild(noteDialogDiv);
+
   const noteActionsDiv = document.createElement("div");
   noteActionsDiv.className = "noteActions";
+  noteActionsDiv.appendChild(
+    Object.assign(document.createElement("img"), {
+      src: expandImg,
+      alt: "Expand",
+    })
+  );
   noteActionsDiv.appendChild(
     Object.assign(document.createElement("img"), {
       src: editImg,
@@ -132,7 +189,14 @@ function addNoteDiv(title, desc, due, prio) {
 
   noteAddDiv.appendChild(noteActionsDiv);
 
-  noteActionsDiv.children[0].addEventListener("click", () => {});
+  noteActionsDiv.children[1].addEventListener("click", () => {
+    noteDialogDiv.showModal();
+  });
+
+  noteActionsDiv.children[2].addEventListener("click", () => {
+    library.targetProject(activeProject).removeNote(title);
+    noteDiv.removeChild(noteAddDiv);
+  });
 
   const noteContentDiv = document.createElement("div");
   for (let i = 0; i < 3; i++) {
@@ -185,7 +249,7 @@ function addNoteDiv(title, desc, due, prio) {
 // POPULATE FUNCTION
 function populate(divName) {
   for (let item of library.targetProject(divName).notes) {
-    addNoteDiv(item.title, item.desc, item._due, item.prio);
+    addNoteDiv(item.title, item.desc, formatter(item._due), item.prio);
   }
 }
 
@@ -269,7 +333,12 @@ noteDialog.children[0].children[4].children[0].addEventListener(
       const lastNote = library
         .targetProject(activeProject)
         .targetNote(tempArr[0]);
-      addNoteDiv(lastNote.title, lastNote.desc, lastNote._due, lastNote.prio);
+      addNoteDiv(
+        lastNote.title,
+        lastNote.desc,
+        formatter(lastNote._due),
+        lastNote.prio
+      );
     }
     noteDialog.children[0].children[0].focus();
   }
