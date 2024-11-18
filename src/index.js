@@ -167,6 +167,52 @@ function addNoteDiv(title, desc, due, prio) {
   noteDialogDiv.appendChild(renameNoteActions);
   noteDiv.appendChild(noteDialogDiv);
 
+  renameNoteActions.children[0].addEventListener("click", (e) => {
+    e.preventDefault();
+    if (check.test(noteDialogDiv.children[0].children[0].value)) {
+      noteDialogDiv.close([
+        noteDialogDiv.children[0].children[0].value,
+        noteDialogDiv.children[0].children[1].value,
+        noteDialogDiv.children[0].children[2].children[1].value,
+      ]);
+    }
+
+    let tempNoteArr = noteDialogDiv.returnValue.split(",");
+    if (tempNoteArr.length > 3) {
+      const len = tempNoteArr.slice(1, -1);
+      tempNoteArr.splice(2, len.length - 1);
+      tempNoteArr[1] = len.join(", ");
+    }
+
+    library
+      .targetProject(activeProject)
+      .targetNote(noteContentDiv.children[0].firstChild.textContent)
+      .renameNote(tempNoteArr[0]);
+    library
+      .targetProject(activeProject)
+      .targetNote(tempNoteArr[0])
+      .changeDesc(tempNoteArr[1]);
+    library
+      .targetProject(activeProject)
+      .targetNote(tempNoteArr[0])
+      .changeDue(tempNoteArr[2]);
+
+    const currentNote = library
+      .targetProject(activeProject)
+      .targetNote(tempNoteArr[0]);
+
+    noteContentDiv.children[0].firstChild.textContent = currentNote.title;
+    description.firstChild.textContent = currentNote.desc;
+    dueDate.textContent = formatter(currentNote._due);
+
+    console.log(currentNote);
+  });
+
+  renameNoteActions.children[1].addEventListener("click", (e) => {
+    e.preventDefault();
+    noteDialogDiv.close();
+  });
+
   const noteActionsDiv = document.createElement("div");
   noteActionsDiv.className = "noteActions";
   noteActionsDiv.appendChild(document.createElement("div"));
@@ -267,15 +313,11 @@ function addNoteDiv(title, desc, due, prio) {
   priority.firstChild.style.backgroundColor = prio;
 
   priority.firstChild.addEventListener("change", () => {
-    priority.firstChild.style.backgroundColor = priority.firstChild.value;
-  });
-
-  priority.firstChild.addEventListener("change", () => {
     library
       .targetProject(activeProject)
-      .targetNote(title)
+      .targetNote(noteContentDiv.children[0].firstChild.textContent)
       .changePrio(priority.firstChild.value);
-    console.log(library.targetProject(activeProject).notes);
+    priority.firstChild.style.backgroundColor = priority.firstChild.value;
   });
 
   noteContentDiv.children[2].appendChild(dueDate);

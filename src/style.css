@@ -473,6 +473,9 @@ dialog:modal {
 .noteActions > div {
   width: 15px;
   margin-right: auto;
+}
+
+.noteActions > div img {
   cursor: pointer;
 }
 

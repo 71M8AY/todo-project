@@ -32,4 +32,9 @@ export class Project {
     }
     return this.notes[index];
   }
+
+  noteIndex(noteName) {
+    const index = this.notes.findIndex((note) => note.title === noteName);
+    return index;
+  }
 }
