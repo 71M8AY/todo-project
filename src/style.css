@@ -524,7 +524,7 @@ dialog:modal {
 
 .description {
   text-align: center;
-  word-break: break-all;
+  word-break: whitespace;
   white-space: normal;
 }
 

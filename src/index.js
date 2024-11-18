@@ -367,7 +367,13 @@ noteDialog.children[0].children[4].children[0].addEventListener(
       noteDialog.children[0].children[3].style.backgroundColor =
         noteDialog.children[0].children[3].value;
 
-      const tempArr = noteDialog.returnValue.split(",");
+      let tempArr = noteDialog.returnValue.split(",");
+      if (tempArr.length > 3) {
+        const len = tempArr.slice(1, -2);
+        tempArr.splice(2, len.length - 1);
+        tempArr[1] = len.join(", ");
+      }
+
       library
         .targetProject(activeProject)
         .addNote(new Note(tempArr[0], tempArr[1], tempArr[2], tempArr[3]));
@@ -383,6 +389,5 @@ noteDialog.children[0].children[4].children[0].addEventListener(
       );
     }
     noteDialog.children[0].children[0].focus();
-    console.log(library.targetProject(activeProject).notes);
   }
 );
