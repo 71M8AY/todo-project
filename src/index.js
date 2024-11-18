@@ -433,3 +433,18 @@ noteDialog.children[0].children[4].children[0].addEventListener(
     noteDialog.children[0].children[0].focus();
   }
 );
+
+projectDialogInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    if (check.test(projectDialogInput.value)) {
+      library.addProject(new Project(projectDialogInput.value));
+      activeProject = projectDialogInput.value;
+      addProjectDiv();
+      projectDialogInput.value = "";
+      projectText.textContent = "Add Project";
+      projectDialog.classList.toggle("display");
+      projectAddButton.classList.toggle("visibility");
+    }
+    projectDialogInput.focus();
+  }
+});
