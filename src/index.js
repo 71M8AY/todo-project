@@ -248,10 +248,12 @@ function addNoteDiv(title, desc, due, prio) {
   noteAddDiv.appendChild(noteActionsDiv);
 
   noteActionsDiv.children[0].children[0].addEventListener("click", () => {
-    noteContentDiv.children[1].classList.toggle("expanded");
-    noteContentDiv.children[2].classList.toggle("footerBorder");
-    noteActionsDiv.children[0].children[0].classList.toggle("display");
-    noteActionsDiv.children[0].children[1].classList.toggle("display");
+    if (description.firstChild.textContent != "") {
+      noteContentDiv.children[1].classList.toggle("expanded");
+      noteContentDiv.children[2].classList.toggle("footerBorder");
+      noteActionsDiv.children[0].children[0].classList.toggle("display");
+      noteActionsDiv.children[0].children[1].classList.toggle("display");
+    }
   });
 
   noteActionsDiv.children[0].children[1].addEventListener("click", () => {
@@ -358,7 +360,10 @@ projectDialogCancel.addEventListener("click", () => {
 });
 
 projectDialogAccept.addEventListener("click", () => {
-  if (check.test(projectDialogInput.value)) {
+  if (
+    check.test(projectDialogInput.value) &&
+    !library.displayLibraryList().includes(projectDialogInput.value)
+  ) {
     library.addProject(new Project(projectDialogInput.value));
     activeProject = projectDialogInput.value;
     addProjectDiv();
@@ -366,6 +371,7 @@ projectDialogAccept.addEventListener("click", () => {
     projectText.textContent = "Add Project";
     projectDialog.classList.toggle("display");
     projectAddButton.classList.toggle("visibility");
+    console.log(library.displayLibraryList());
   }
   projectDialogInput.focus();
 });
@@ -395,7 +401,13 @@ noteDialog.children[0].children[4].children[0].addEventListener(
   "click",
   (e) => {
     e.preventDefault();
-    if (check.test(noteDialog.children[0].children[0].value)) {
+    if (
+      check.test(noteDialog.children[0].children[0].value) &&
+      !library
+        .targetProject(activeProject)
+        .showNotes()
+        .includes(noteDialog.children[0].children[0].value)
+    ) {
       noteDialog.close([
         noteDialog.children[0].children[0].value,
         noteDialog.children[0].children[1].value,
@@ -436,7 +448,10 @@ noteDialog.children[0].children[4].children[0].addEventListener(
 
 projectDialogInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    if (check.test(projectDialogInput.value)) {
+    if (
+      check.test(projectDialogInput.value) &&
+      !library.displayLibraryList().includes(projectDialogInput.value)
+    ) {
       library.addProject(new Project(projectDialogInput.value));
       activeProject = projectDialogInput.value;
       addProjectDiv();
