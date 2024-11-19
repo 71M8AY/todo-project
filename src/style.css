@@ -4,6 +4,7 @@
   --prussian-blue: #003459ff;
   --cerulean: #007ea7ff;
   --picton-blue: #00a8e8ff;
+  interpolate-size: allow-keywords;
 }
 
 ::-webkit-scrollbar {
@@ -47,7 +48,7 @@
 }
 
 .footerBorder {
-  border-top: 2px solid var(--rich-black);
+  border-top: 2px solid var(--rich-black) !important;
 }
 
 body {
@@ -514,7 +515,9 @@ dialog:modal {
 
 .noteFooter {
   display: grid;
+  border-top: 0 solid black;
   grid-template-columns: 4fr 1fr;
+  transition: border-top ease-in 0.4s;
 }
 
 .extra {
@@ -523,6 +526,8 @@ dialog:modal {
   align-items: center;
   flex-direction: column;
   height: 0px;
+  padding: 0;
+  transition: height ease 0.5s, padding 0.5s;
 }
 
 .description {
