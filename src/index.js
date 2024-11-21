@@ -132,12 +132,14 @@ function addNoteDiv(title, desc, due, prio) {
   noteDialogDiv.appendChild(
     Object.assign(document.createElement("form"), { method: "dialog" })
   );
+
   noteDialogDiv.children[0].appendChild(
     Object.assign(document.createElement("input"), {
       type: "text",
       value: title,
     })
   );
+
   noteDialogDiv.children[0].appendChild(
     Object.assign(document.createElement("textarea"), {
       textContent: desc,
@@ -209,7 +211,11 @@ function addNoteDiv(title, desc, due, prio) {
       .targetNote(tempNoteArr[0]);
 
     noteContentDiv.children[0].firstChild.textContent = currentNote.title;
-    description.firstChild.textContent = currentNote.desc;
+    if (currentNote.desc === "") {
+      description.firstChild.textContent = "No description";
+    } else {
+      description.firstChild.textContent = currentNote.desc;
+    }
     dueDate.textContent = formatter(currentNote._due);
 
     console.log(currentNote);
@@ -298,7 +304,11 @@ function addNoteDiv(title, desc, due, prio) {
   const description = document.createElement("div");
   description.className = "description";
   description.appendChild(document.createElement("p"));
-  description.firstChild.textContent = desc;
+  if (desc === "") {
+    description.firstChild.textContent = "No Description.";
+  } else {
+    description.firstChild.textContent = desc;
+  }
   noteContentDiv.children[1].appendChild(description);
   noteContentDiv.children[1].appendChild(
     Object.assign(document.createElement("img"), { src: plusImg })
@@ -806,6 +816,8 @@ noteDialog.children[0].children[4].children[0].addEventListener(
   }
 );
 
+// KEYBOARD SUPPORT
+
 projectDialogInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     if (
@@ -821,5 +833,53 @@ projectDialogInput.addEventListener("keydown", (e) => {
       projectAddButton.classList.toggle("visibility");
     }
     projectDialogInput.focus();
+  }
+});
+
+noteDialog.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    if (
+      check.test(noteDialog.children[0].children[0].value) &&
+      !library
+        .targetProject(activeProject)
+        .showNotes()
+        .includes(noteDialog.children[0].children[0].value)
+    ) {
+      noteDialog.close([
+        noteDialog.children[0].children[0].value,
+        noteDialog.children[0].children[1].value,
+        noteDialog.children[0].children[2].children[1].value,
+        noteDialog.children[0].children[3].value,
+      ]);
+      noteDialog.children[0].children[0].value = "";
+      noteDialog.children[0].children[1].value = "";
+      noteDialog.children[0].children[2].children[1].value = "";
+      noteDialog.children[0].children[3].value = "white";
+      noteDialog.children[0].children[3].style.backgroundColor =
+        noteDialog.children[0].children[3].value;
+
+      let tempArr = noteDialog.returnValue.split(",");
+      if (tempArr.length > 3) {
+        const len = tempArr.slice(1, -2);
+        tempArr.splice(2, len.length - 1);
+        tempArr[1] = len.join(", ");
+      }
+
+      library
+        .targetProject(activeProject)
+        .addNote(new Note(tempArr[0], tempArr[1], tempArr[2], tempArr[3]));
+
+      const lastNote = library
+        .targetProject(activeProject)
+        .targetNote(tempArr[0]);
+      addNoteDiv(
+        lastNote.title,
+        lastNote.desc,
+        formatter(lastNote._due),
+        lastNote.prio
+      );
+    }
+    noteDialog.children[0].children[0].focus();
   }
 });
