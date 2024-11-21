@@ -19,6 +19,11 @@ export class Note {
     this.subNotes.push(subNote);
   }
 
+  showSubNotes() {
+    let array = this.subNotes.map((subNote) => subNote.goal);
+    return array;
+  }
+
   targetSubNote(subNoteName) {
     const index = this.subNotes.findIndex(
       (subNote) => subNote.goal === subNoteName
