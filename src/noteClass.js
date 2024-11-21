@@ -1,5 +1,3 @@
-import { formatter } from "/src/formatter.js";
-
 export class Note {
   constructor(title, desc, due, prio) {
     this.title = title;
@@ -19,6 +17,16 @@ export class Note {
 
   addSubNote(subNote) {
     this.subNotes.push(subNote);
+  }
+
+  targetSubNote(subNoteName) {
+    const index = this.subNotes.findIndex(
+      (subNote) => subNote.goal === subNoteName
+    );
+    if (index < 0) {
+      throw new Error("Subnote doesn't exist!");
+    }
+    return this.subNotes[index];
   }
 
   removeSubNote(subNote) {

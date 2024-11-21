@@ -4,6 +4,7 @@ import { Note } from "./noteClass";
 import { SubNote } from "./subNoteClass";
 import { formatter } from "./formatter";
 import "./style.css";
+import plusImg from "./plus.svg";
 import editImg from "./edit.svg";
 import deleteImg from "./delete.svg";
 import tickImg from "./tick.svg";
@@ -76,7 +77,7 @@ function addProjectDiv() {
     library.displayLibraryList()[library.displayLibraryList().length - 1];
   projectDiv.append(projectDivDialog);
 
-  projectDiv.addEventListener("click", () => {
+  projectDiv.firstChild.addEventListener("click", () => {
     activeProject = projectDiv.firstChild.textContent;
     noteDiv.textContent = "";
     populate(activeProject);
@@ -103,14 +104,20 @@ function addProjectDiv() {
   });
 
   projectDivDialogActions.firstChild.addEventListener("click", () => {
-    projectDivDialog.classList.toggle("display");
-    library
-      .targetProject(projectDiv.firstChild.textContent)
-      .renameProject(projectDivDialog.children[0].value);
+    if (
+      check.test(projectDivDialog.children[0].value) &&
+      !library.displayLibraryList().includes(projectDivDialog.children[0].value)
+    ) {
+      projectDivDialog.classList.toggle("display");
+      library
+        .targetProject(projectDiv.firstChild.textContent)
+        .renameProject(projectDivDialog.children[0].value);
 
-    projectDiv.firstChild.textContent = projectDivDialog.children[0].value;
-    projectDivDialog.children[0].value = "";
-    console.log(library.displayLibraryList());
+      projectDiv.firstChild.textContent = projectDivDialog.children[0].value;
+      projectDivDialog.children[0].value = "";
+      console.log(library.displayLibraryList());
+    }
+    projectDivDialog.children[0].focus();
   });
 }
 
@@ -248,12 +255,10 @@ function addNoteDiv(title, desc, due, prio) {
   noteAddDiv.appendChild(noteActionsDiv);
 
   noteActionsDiv.children[0].children[0].addEventListener("click", () => {
-    if (description.firstChild.textContent != "") {
-      noteContentDiv.children[1].classList.toggle("expanded");
-      noteContentDiv.children[2].classList.toggle("footerBorder");
-      noteActionsDiv.children[0].children[0].classList.toggle("display");
-      noteActionsDiv.children[0].children[1].classList.toggle("display");
-    }
+    noteContentDiv.children[1].classList.toggle("expanded");
+    noteContentDiv.children[2].classList.toggle("footerBorder");
+    noteActionsDiv.children[0].children[0].classList.toggle("display");
+    noteActionsDiv.children[0].children[1].classList.toggle("display");
   });
 
   noteActionsDiv.children[0].children[1].addEventListener("click", () => {
@@ -268,7 +273,9 @@ function addNoteDiv(title, desc, due, prio) {
   });
 
   noteActionsDiv.children[2].addEventListener("click", () => {
-    library.targetProject(activeProject).removeNote(title);
+    library
+      .targetProject(activeProject)
+      .removeNote(noteContentDiv.children[0].firstChild.textContent);
     noteDiv.removeChild(noteAddDiv);
   });
 
@@ -294,7 +301,187 @@ function addNoteDiv(title, desc, due, prio) {
   description.firstChild.textContent = desc;
   noteContentDiv.children[1].appendChild(description);
   noteContentDiv.children[1].appendChild(
-    Object.assign(document.createElement("div"), { class: "extraList" })
+    Object.assign(document.createElement("img"), { src: plusImg })
+  );
+  noteContentDiv.children[1].children[1].classList.add("addSubNote", "display");
+  noteContentDiv.children[1].children[1].classList.toggle("display");
+  noteContentDiv.children[1].appendChild(document.createElement("div"));
+  noteContentDiv.children[1].children[2].classList.add(
+    "subNoteInputDiv",
+    "display"
+  );
+  noteContentDiv.children[1].children[2].appendChild(
+    document.createElement("input")
+  );
+  noteContentDiv.children[1].children[2].appendChild(
+    Object.assign(document.createElement("img"), {
+      src: tickImg,
+      alt: "Accept",
+    })
+  );
+  noteContentDiv.children[1].children[2].appendChild(
+    Object.assign(document.createElement("img"), {
+      src: deleteImg,
+      alt: "Cancel",
+    })
+  );
+  noteContentDiv.children[1].appendChild(document.createElement("div"));
+  noteContentDiv.children[1].children[3].className = "extraList";
+
+  noteContentDiv.children[1].children[1].addEventListener("click", () => {
+    noteContentDiv.children[1].children[1].classList.toggle("display");
+    noteContentDiv.children[1].children[2].classList.toggle("display");
+    noteContentDiv.children[1].children[2].children[0].focus();
+  });
+
+  noteContentDiv.children[1].children[2].children[2].addEventListener(
+    "click",
+    () => {
+      noteContentDiv.children[1].children[2].firstChild.value = "";
+      noteContentDiv.children[1].children[1].classList.toggle("display");
+      noteContentDiv.children[1].children[2].classList.toggle("display");
+    }
+  );
+
+  noteContentDiv.children[1].children[2].children[1].addEventListener(
+    "click",
+    () => {
+      library
+        .targetProject(activeProject)
+        .targetNote(noteContentDiv.children[0].firstChild.textContent)
+        .addSubNote(
+          new SubNote(noteContentDiv.children[1].children[2].firstChild.value)
+        );
+
+      const listDiv = document.createElement("div");
+
+      listDiv.appendChild(
+        Object.assign(document.createElement("input"), { type: "checkbox" })
+      );
+
+      listDiv.firstChild.classList.add("display");
+      listDiv.firstChild.classList.toggle("display");
+      listDiv.appendChild(document.createElement("div"));
+      listDiv.children[1].appendChild(
+        Object.assign(document.createElement("p"), {
+          textContent: noteContentDiv.children[1].children[2].firstChild.value,
+        })
+      );
+      listDiv.children[1].firstChild.classList.add("visibility", "crossed");
+      listDiv.children[1].firstChild.classList.toggle("visibility");
+      listDiv.children[1].firstChild.classList.toggle("crossed");
+
+      listDiv.children[1].appendChild(
+        Object.assign(document.createElement("input"), { type: "text" })
+      );
+      listDiv.children[1].lastChild.classList.add("display");
+      listDiv.children[1].lastChild.value =
+        listDiv.children[1].firstChild.textContent;
+
+      listDiv.appendChild(document.createElement("div"));
+      listDiv.lastChild.className = "subNoteActions";
+      listDiv.lastChild.appendChild(
+        Object.assign(document.createElement("img"), {
+          src: editImg,
+          alt: "Edit",
+        })
+      );
+      listDiv.lastChild.appendChild(
+        Object.assign(document.createElement("img"), {
+          src: tickImg,
+          alt: "Accept",
+        })
+      );
+      listDiv.lastChild.appendChild(
+        Object.assign(document.createElement("img"), {
+          src: deleteImg,
+          alt: "Cancel",
+        })
+      );
+      listDiv.lastChild.appendChild(
+        Object.assign(document.createElement("img"), {
+          src: deleteImg,
+          alt: "Delete",
+        })
+      );
+
+      for (const child of listDiv.lastChild.children) {
+        child.classList.add("display");
+      }
+
+      listDiv.lastChild.firstChild.classList.toggle("display");
+      listDiv.lastChild.lastChild.classList.toggle("display");
+
+      listDiv.lastChild.lastChild.addEventListener("click", () => {
+        library
+          .targetProject(activeProject)
+          .targetNote(noteContentDiv.children[0].firstChild.textContent)
+          .removeSubNote(listDiv.children[1].firstChild.textContent);
+
+        noteContentDiv.children[1].children[3].removeChild(listDiv);
+      });
+
+      listDiv.lastChild.firstChild.addEventListener("click", () => {
+        for (const child of listDiv.lastChild.children) {
+          child.classList.toggle("display");
+        }
+        listDiv.firstChild.classList.toggle("display");
+        listDiv.children[1].firstChild.classList.toggle("visibility");
+        listDiv.children[1].lastChild.classList.toggle("display");
+        listDiv.children[1].lastChild.focus();
+      });
+
+      listDiv.lastChild.children[1].addEventListener("click", () => {
+        for (const child of listDiv.lastChild.children) {
+          child.classList.toggle("display");
+        }
+        library
+          .targetProject(activeProject)
+          .targetNote(noteContentDiv.children[0].firstChild.textContent)
+          .targetSubNote(listDiv.children[1].firstChild.textContent)
+          .renameGoal(listDiv.children[1].lastChild.value);
+        listDiv.children[1].firstChild.textContent =
+          listDiv.children[1].lastChild.value;
+        listDiv.children[1].firstChild.classList.toggle("visibility");
+        listDiv.children[1].lastChild.classList.toggle("display");
+        listDiv.firstChild.classList.toggle("display");
+      });
+
+      listDiv.lastChild.children[2].addEventListener("click", () => {
+        for (const child of listDiv.lastChild.children) {
+          child.classList.toggle("display");
+        }
+        listDiv.children[1].firstChild.classList.toggle("visibility");
+        listDiv.children[1].lastChild.classList.toggle("display");
+        listDiv.firstChild.classList.toggle("display");
+      });
+
+      listDiv.firstChild.addEventListener("change", () => {
+        let state = library
+          .targetProject(activeProject)
+          .targetNote(noteContentDiv.children[0].firstChild.textContent)
+          .targetSubNote(listDiv.children[1].firstChild.textContent).state;
+
+        library
+          .targetProject(activeProject)
+          .targetNote(noteContentDiv.children[0].firstChild.textContent)
+          .targetSubNote(listDiv.children[1].firstChild.textContent)
+          .changeState(!state);
+        console.log(
+          library
+            .targetProject(activeProject)
+            .targetNote(noteContentDiv.children[0].firstChild.textContent)
+            .targetSubNote(listDiv.children[1].firstChild.textContent)
+        );
+
+        listDiv.children[1].firstChild.classList.toggle("crossed");
+      });
+
+      noteContentDiv.children[1].children[2].firstChild.value = "";
+      noteContentDiv.children[1].children[1].classList.toggle("display");
+      noteContentDiv.children[1].children[2].classList.toggle("display");
+      noteContentDiv.children[1].children[3].appendChild(listDiv);
+    }
   );
 
   const dueDate = document.createElement("div");
@@ -330,10 +517,162 @@ function addNoteDiv(title, desc, due, prio) {
   noteDiv.appendChild(noteAddDiv);
 }
 
+function populateSubNote(subNoteName) {
+  const listDiv = document.createElement("div");
+
+  listDiv.appendChild(
+    Object.assign(document.createElement("input"), { type: "checkbox" })
+  );
+
+  if (
+    library
+      .targetProject(activeProject)
+      .targetNote(noteDiv.lastChild.lastChild.firstChild.firstChild.textContent)
+      .targetSubNote(subNoteName).state
+  ) {
+    listDiv.firstChild.setAttribute("checked", "");
+  }
+
+  listDiv.firstChild.classList.add("display");
+  listDiv.firstChild.classList.toggle("display");
+  listDiv.appendChild(document.createElement("div"));
+  listDiv.children[1].appendChild(
+    Object.assign(document.createElement("p"), {
+      textContent: subNoteName,
+    })
+  );
+  listDiv.children[1].firstChild.classList.add("visibility", "crossed");
+  listDiv.children[1].firstChild.classList.toggle("visibility");
+  listDiv.children[1].firstChild.classList.toggle("crossed");
+
+  listDiv.children[1].appendChild(
+    Object.assign(document.createElement("input"), { type: "text" })
+  );
+  listDiv.children[1].lastChild.classList.add("display");
+  listDiv.children[1].lastChild.value =
+    listDiv.children[1].firstChild.textContent;
+
+  listDiv.appendChild(document.createElement("div"));
+  listDiv.lastChild.className = "subNoteActions";
+  listDiv.lastChild.appendChild(
+    Object.assign(document.createElement("img"), {
+      src: editImg,
+      alt: "Edit",
+    })
+  );
+  listDiv.lastChild.appendChild(
+    Object.assign(document.createElement("img"), {
+      src: tickImg,
+      alt: "Accept",
+    })
+  );
+  listDiv.lastChild.appendChild(
+    Object.assign(document.createElement("img"), {
+      src: deleteImg,
+      alt: "Cancel",
+    })
+  );
+  listDiv.lastChild.appendChild(
+    Object.assign(document.createElement("img"), {
+      src: deleteImg,
+      alt: "Delete",
+    })
+  );
+
+  for (const child of listDiv.lastChild.children) {
+    child.classList.add("display");
+  }
+
+  listDiv.lastChild.firstChild.classList.toggle("display");
+  listDiv.lastChild.lastChild.classList.toggle("display");
+
+  listDiv.lastChild.lastChild.addEventListener("click", () => {
+    library
+      .targetProject(activeProject)
+      .targetNote(
+        listDiv.parentElement.parentElement.parentElement.firstChild.firstChild
+          .textContent
+      )
+      .removeSubNote(listDiv.children[1].firstChild.textContent);
+
+    listDiv.parentElement.removeChild(listDiv);
+  });
+
+  listDiv.lastChild.firstChild.addEventListener("click", () => {
+    for (const child of listDiv.lastChild.children) {
+      child.classList.toggle("display");
+    }
+    listDiv.firstChild.classList.toggle("display");
+    listDiv.children[1].firstChild.classList.toggle("visibility");
+    listDiv.children[1].lastChild.classList.toggle("display");
+    listDiv.children[1].lastChild.focus();
+  });
+
+  listDiv.lastChild.children[1].addEventListener("click", () => {
+    for (const child of listDiv.lastChild.children) {
+      child.classList.toggle("display");
+    }
+    library
+      .targetProject(activeProject)
+      .targetNote(
+        listDiv.parentElement.parentElement.parentElement.firstChild.firstChild
+          .textContent
+      )
+      .targetSubNote(listDiv.children[1].firstChild.textContent)
+      .renameGoal(listDiv.children[1].lastChild.value);
+    listDiv.children[1].firstChild.textContent =
+      listDiv.children[1].lastChild.value;
+    listDiv.children[1].firstChild.classList.toggle("visibility");
+    listDiv.children[1].lastChild.classList.toggle("display");
+    listDiv.firstChild.classList.toggle("display");
+  });
+
+  listDiv.lastChild.children[2].addEventListener("click", () => {
+    for (const child of listDiv.lastChild.children) {
+      child.classList.toggle("display");
+    }
+    listDiv.children[1].firstChild.classList.toggle("visibility");
+    listDiv.children[1].lastChild.classList.toggle("display");
+    listDiv.firstChild.classList.toggle("display");
+  });
+
+  listDiv.firstChild.addEventListener("change", () => {
+    let state = library
+      .targetProject(activeProject)
+      .targetNote(
+        listDiv.parentElement.parentElement.parentElement.firstChild.firstChild
+          .textContent
+      )
+      .targetSubNote(listDiv.children[1].firstChild.textContent).state;
+
+    library
+      .targetProject(activeProject)
+      .targetNote(
+        listDiv.parentElement.parentElement.parentElement.firstChild.firstChild
+          .textContent
+      )
+      .targetSubNote(listDiv.children[1].firstChild.textContent)
+      .changeState(!state);
+    console.log(
+      library
+        .targetProject(activeProject)
+        .targetNote(noteContentDiv.children[0].firstChild.textContent)
+        .targetSubNote(listDiv.children[1].firstChild.textContent)
+    );
+
+    listDiv.children[1].firstChild.classList.toggle("crossed");
+  });
+
+  noteDiv.lastChild.lastChild.children[1].lastChild.appendChild(listDiv);
+}
+
 // POPULATE FUNCTION
 function populate(divName) {
   for (let item of library.targetProject(divName).notes) {
     addNoteDiv(item.title, item.desc, formatter(item._due), item.prio);
+    for (let subnote of item.subNotes) {
+      populateSubNote(subnote.goal);
+    }
   }
 }
 

@@ -43,12 +43,17 @@
 }
 
 .expanded {
-  padding: 5px;
+  padding: 5px !important;
   height: fit-content !important;
 }
 
 .footerBorder {
   border-top: 2px solid var(--rich-black) !important;
+}
+
+.crossed {
+  color: gray !important;
+  text-decoration: line-through !important;
 }
 
 body {
@@ -521,6 +526,7 @@ dialog:modal {
 }
 
 .extra {
+  display: flex;
   overflow: hidden;
   justify-content: center;
   align-items: center;
@@ -531,9 +537,120 @@ dialog:modal {
 }
 
 .description {
+  width: 100%;
+  padding: 5px;
   text-align: center;
   word-break: whitespace;
   white-space: normal;
+}
+
+.description p {
+  padding: 5px;
+  background-color: var(--picton-blue);
+  border-radius: 5px;
+}
+
+.extraList {
+  display: flex;
+  flex-direction: column;
+}
+
+.extraList > div {
+  padding: 2px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  position: relative;
+  display: flex;
+  gap: 5px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.extraList > div > div:last-child {
+  display: flex;
+  gap: 5px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.extraList div > div:nth-child(2) {
+  position: relative;
+  width: fit-content;
+}
+
+.extraList div > div:nth-child(2) > input {
+  position: absolute;
+  word-break: whitespace;
+  white-space: normal;
+  border-radius: 5px;
+  width: 100%;
+  height: 100%;
+  padding-left: 2px;
+  right: 0;
+  top: 0;
+}
+
+.extraList p {
+  width: 100%;
+  text-align: center;
+  word-break: whitespace;
+  white-space: normal;
+}
+
+.extraList img {
+  cursor: pointer;
+  width: 12px !important;
+}
+
+.extraList input:first-child {
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border: 2px solid var(--rich-black);
+  border-radius: 5px;
+  background-color: white;
+  min-width: 15px;
+  min-height: 15px;
+}
+
+.extraList input::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em black;
+}
+
+.extraList input:checked::before {
+  transform: scale(1);
+}
+
+.addSubNote {
+  cursor: pointer;
+  margin-left: 8px;
+  margin-bottom: 10px;
+  width: 25px !important;
+}
+
+.subNoteInputDiv {
+  display: flex;
+  padding: 5px;
+  gap: 5px;
+  width: 100%;
+}
+
+.subNoteInputDiv input {
+  border: 1px solid var(--rich-black);
+  border-radius: 8px;
+  width: 75%;
+  height: 25px;
+  padding-left: 5px;
+}
+
+.subNoteInputDiv img {
+  cursor: pointer;
 }
 
 .extraList {
