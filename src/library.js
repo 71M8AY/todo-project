@@ -1,5 +1,26 @@
+import { Note } from "./noteClass";
+import { Project } from "./projectClass";
+import { SubNote } from "./subNoteClass";
+
 export const library = (function Library() {
   let libraryList = [];
+
+  window.addEventListener("DOMContentLoaded", () => {
+    for (const item of JSON.parse(localStorage.getItem("libraryArray"))) {
+      libraryList.push(new Project(item.name));
+      for (const note of item.notes) {
+        libraryList[libraryList.length - 1].addNote(
+          new Note(note.title, note.desc, note._due, note.prio)
+        );
+        for (const subNote of note.subNotes) {
+          libraryList[libraryList.length - 1].notes[
+            libraryList[libraryList.length - 1].notes.length - 1
+          ].addSubNote(new SubNote(subNote.goal, subNote.state));
+        }
+      }
+    }
+    console.log(library.libraryList);
+  });
 
   const addProject = (item) => {
     libraryList.push(item);
@@ -21,5 +42,11 @@ export const library = (function Library() {
     return nameArray;
   };
 
-  return { addProject, removeProject, targetProject, displayLibraryList };
+  return {
+    addProject,
+    removeProject,
+    targetProject,
+    displayLibraryList,
+    libraryList,
+  };
 })();

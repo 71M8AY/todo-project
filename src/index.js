@@ -11,6 +11,12 @@ import tickImg from "./tick.svg";
 import expandImg from "./expand.svg";
 import shrinkImg from "./shrink.svg";
 
+window.addEventListener("load", () => {
+  for (const project of library.libraryList) {
+    addProjectDiv(project.name);
+  }
+});
+
 // VARIABLE
 const check = /^[a-zA-Z0-9_]/;
 let activeProject = "";
@@ -30,7 +36,7 @@ const projectText = document.querySelector(".add > p");
 
 // PROJECT DIV
 
-function addProjectDiv() {
+function addProjectDiv(projectName) {
   const libraryDiv = document.querySelector(".projects");
   const projectDiv = document.createElement("div");
   projectDiv.appendChild(document.createElement("p"));
@@ -73,8 +79,7 @@ function addProjectDiv() {
 
   projectDiv.appendChild(projectActionsDiv);
   libraryDiv.appendChild(projectDiv);
-  projectDiv.firstChild.textContent =
-    library.displayLibraryList()[library.displayLibraryList().length - 1];
+  projectDiv.firstChild.textContent = projectName;
   projectDiv.append(projectDivDialog);
 
   projectDiv.firstChild.addEventListener("click", () => {
@@ -86,7 +91,11 @@ function addProjectDiv() {
 
   projectActionsDiv.lastChild.addEventListener("click", (e) => {
     e.stopPropagation();
+    if (activeProject === projectDiv.firstChild.textContent) {
+      noteDiv.textContent = "";
+    }
     library.removeProject(projectDiv.firstChild.textContent);
+    localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
     libraryDiv.removeChild(projectDiv);
     if (library.displayLibraryList().length === 0) {
       activeProject = "";
@@ -113,6 +122,7 @@ function addProjectDiv() {
       library
         .targetProject(projectDiv.firstChild.textContent)
         .renameProject(projectDivDialog.children[0].value);
+      localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
 
       projectDiv.firstChild.textContent = projectDivDialog.children[0].value;
       projectDivDialog.children[0].value = "";
@@ -210,6 +220,8 @@ function addNoteDiv(title, desc, due, prio) {
       .targetProject(activeProject)
       .targetNote(tempNoteArr[0]);
 
+    localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
+
     noteContentDiv.children[0].firstChild.textContent = currentNote.title;
     if (currentNote.desc === "") {
       description.firstChild.textContent = "No description";
@@ -280,6 +292,7 @@ function addNoteDiv(title, desc, due, prio) {
     library
       .targetProject(activeProject)
       .removeNote(noteContentDiv.children[0].firstChild.textContent);
+    localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
     noteDiv.removeChild(noteAddDiv);
   });
 
@@ -369,6 +382,11 @@ function addNoteDiv(title, desc, due, prio) {
             new SubNote(noteContentDiv.children[1].children[2].firstChild.value)
           );
 
+        localStorage.setItem(
+          "libraryArray",
+          JSON.stringify(library.libraryList)
+        );
+
         const listDiv = document.createElement("div");
 
         listDiv.appendChild(
@@ -434,6 +452,10 @@ function addNoteDiv(title, desc, due, prio) {
             .targetProject(activeProject)
             .targetNote(noteContentDiv.children[0].firstChild.textContent)
             .removeSubNote(listDiv.children[1].firstChild.textContent);
+          localStorage.setItem(
+            "libraryArray",
+            JSON.stringify(library.libraryList)
+          );
 
           noteContentDiv.children[1].children[3].removeChild(listDiv);
         });
@@ -465,6 +487,10 @@ function addNoteDiv(title, desc, due, prio) {
               .targetNote(noteContentDiv.children[0].firstChild.textContent)
               .targetSubNote(listDiv.children[1].firstChild.textContent)
               .renameGoal(listDiv.children[1].lastChild.value);
+            localStorage.setItem(
+              "libraryArray",
+              JSON.stringify(library.libraryList)
+            );
             listDiv.children[1].firstChild.textContent =
               listDiv.children[1].lastChild.value;
             listDiv.children[1].firstChild.classList.toggle("visibility");
@@ -493,6 +519,10 @@ function addNoteDiv(title, desc, due, prio) {
             .targetNote(noteContentDiv.children[0].firstChild.textContent)
             .targetSubNote(listDiv.children[1].firstChild.textContent)
             .changeState(!state);
+          localStorage.setItem(
+            "libraryArray",
+            JSON.stringify(library.libraryList)
+          );
 
           listDiv.children[1].firstChild.classList.toggle("crossed");
         });
@@ -528,6 +558,7 @@ function addNoteDiv(title, desc, due, prio) {
       .targetProject(activeProject)
       .targetNote(noteContentDiv.children[0].firstChild.textContent)
       .changePrio(priority.firstChild.value);
+    localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
     priority.firstChild.style.backgroundColor = priority.firstChild.value;
   });
 
@@ -546,15 +577,6 @@ function populateSubNote(subNoteName) {
     Object.assign(document.createElement("input"), { type: "checkbox" })
   );
 
-  if (
-    library
-      .targetProject(activeProject)
-      .targetNote(noteDiv.lastChild.lastChild.firstChild.firstChild.textContent)
-      .targetSubNote(subNoteName).state
-  ) {
-    listDiv.firstChild.setAttribute("checked", "");
-  }
-
   listDiv.firstChild.classList.add("display");
   listDiv.firstChild.classList.toggle("display");
   listDiv.appendChild(document.createElement("div"));
@@ -566,6 +588,16 @@ function populateSubNote(subNoteName) {
   listDiv.children[1].firstChild.classList.add("visibility", "crossed");
   listDiv.children[1].firstChild.classList.toggle("visibility");
   listDiv.children[1].firstChild.classList.toggle("crossed");
+
+  if (
+    library
+      .targetProject(activeProject)
+      .targetNote(noteDiv.lastChild.lastChild.firstChild.firstChild.textContent)
+      .targetSubNote(subNoteName).state
+  ) {
+    listDiv.firstChild.setAttribute("checked", "");
+    listDiv.children[1].firstChild.classList.toggle("crossed");
+  }
 
   listDiv.children[1].appendChild(
     Object.assign(document.createElement("input"), { type: "text" })
@@ -616,6 +648,7 @@ function populateSubNote(subNoteName) {
           .textContent
       )
       .removeSubNote(listDiv.children[1].firstChild.textContent);
+    localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
 
     listDiv.parentElement.removeChild(listDiv);
   });
@@ -642,6 +675,7 @@ function populateSubNote(subNoteName) {
       )
       .targetSubNote(listDiv.children[1].firstChild.textContent)
       .renameGoal(listDiv.children[1].lastChild.value);
+    localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
     listDiv.children[1].firstChild.textContent =
       listDiv.children[1].lastChild.value;
     listDiv.children[1].firstChild.classList.toggle("visibility");
@@ -675,6 +709,7 @@ function populateSubNote(subNoteName) {
       )
       .targetSubNote(listDiv.children[1].firstChild.textContent)
       .changeState(!state);
+    localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
 
     listDiv.children[1].firstChild.classList.toggle("crossed");
   });
@@ -720,8 +755,9 @@ projectDialogAccept.addEventListener("click", () => {
     !library.displayLibraryList().includes(projectDialogInput.value)
   ) {
     library.addProject(new Project(projectDialogInput.value));
+    localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
     activeProject = projectDialogInput.value;
-    addProjectDiv();
+    addProjectDiv(projectDialogInput.value);
     projectDialogInput.value = "";
     projectText.textContent = "Add Project";
     projectDialog.classList.toggle("display");
@@ -785,6 +821,7 @@ noteDialog.children[0].children[4].children[0].addEventListener(
       library
         .targetProject(activeProject)
         .addNote(new Note(tempArr[0], tempArr[1], tempArr[2], tempArr[3]));
+      localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
 
       const lastNote = library
         .targetProject(activeProject)
@@ -809,8 +846,9 @@ projectDialogInput.addEventListener("keydown", (e) => {
       !library.displayLibraryList().includes(projectDialogInput.value)
     ) {
       library.addProject(new Project(projectDialogInput.value));
+      localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
       activeProject = projectDialogInput.value;
-      addProjectDiv();
+      addProjectDiv(projectDialogInput.value);
       projectDialogInput.value = "";
       projectText.textContent = "Add Project";
       projectDialog.classList.toggle("display");
@@ -862,6 +900,7 @@ noteDialog.addEventListener("keydown", (e) => {
       library
         .targetProject(activeProject)
         .addNote(new Note(tempArr[0], tempArr[1], tempArr[2], tempArr[3]));
+      localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
 
       const lastNote = library
         .targetProject(activeProject)
