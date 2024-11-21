@@ -96,6 +96,7 @@ function addProjectDiv() {
 
   projectActionsDiv.firstChild.addEventListener("click", () => {
     projectDivDialog.classList.toggle("display");
+    projectDivDialog.children[0].value = projectDiv.firstChild.textContent;
     projectDivDialog.children[0].focus();
   });
 
@@ -115,7 +116,6 @@ function addProjectDiv() {
 
       projectDiv.firstChild.textContent = projectDivDialog.children[0].value;
       projectDivDialog.children[0].value = "";
-      console.log(library.displayLibraryList());
     }
     projectDivDialog.children[0].focus();
   });
@@ -217,8 +217,6 @@ function addNoteDiv(title, desc, due, prio) {
       description.firstChild.textContent = currentNote.desc;
     }
     dueDate.textContent = formatter(currentNote._due);
-
-    console.log(currentNote);
   });
 
   renameNoteActions.children[1].addEventListener("click", (e) => {
@@ -364,13 +362,6 @@ function addNoteDiv(title, desc, due, prio) {
           .showSubNotes()
           .includes(noteContentDiv.children[1].children[2].firstChild.value)
       ) {
-        console.log(
-          library
-            .targetProject(activeProject)
-            .targetNote(noteContentDiv.children[0].firstChild.textContent)
-            .subNotes
-        );
-
         library
           .targetProject(activeProject)
           .targetNote(noteContentDiv.children[0].firstChild.textContent)
@@ -684,12 +675,6 @@ function populateSubNote(subNoteName) {
       )
       .targetSubNote(listDiv.children[1].firstChild.textContent)
       .changeState(!state);
-    console.log(
-      library
-        .targetProject(activeProject)
-        .targetNote(noteContentDiv.children[0].firstChild.textContent)
-        .targetSubNote(listDiv.children[1].firstChild.textContent)
-    );
 
     listDiv.children[1].firstChild.classList.toggle("crossed");
   });
@@ -741,7 +726,6 @@ projectDialogAccept.addEventListener("click", () => {
     projectText.textContent = "Add Project";
     projectDialog.classList.toggle("display");
     projectAddButton.classList.toggle("visibility");
-    console.log(library.displayLibraryList());
   }
   projectDialogInput.focus();
 });
@@ -833,6 +817,15 @@ projectDialogInput.addEventListener("keydown", (e) => {
       projectAddButton.classList.toggle("visibility");
     }
     projectDialogInput.focus();
+  }
+});
+
+projectDialogInput.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    projectText.textContent = "Add Project";
+    projectDialogInput.value = "";
+    projectDialog.classList.toggle("display");
+    projectAddButton.classList.toggle("visibility");
   }
 });
 
