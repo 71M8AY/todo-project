@@ -18,6 +18,9 @@ window.addEventListener("load", () => {
 });
 
 // VARIABLE
+const libraryDiv = document.querySelector(".projects");
+const projectSearch = document.querySelector(".search");
+const noteSearch = document.querySelector(".noteSearchField");
 const check = /^[a-zA-Z0-9_]/;
 let activeProject = "";
 const noteDiv = document.querySelector(".notes");
@@ -37,7 +40,6 @@ const projectText = document.querySelector(".add > p");
 // PROJECT DIV
 
 function addProjectDiv(projectName) {
-  const libraryDiv = document.querySelector(".projects");
   const projectDiv = document.createElement("div");
   projectDiv.appendChild(document.createElement("p"));
   const projectActionsDiv = document.createElement("div");
@@ -137,8 +139,7 @@ function addNoteDiv(title, desc, due, prio) {
   const noteAddDiv = document.createElement("div");
 
   const noteDialogDiv = document.createElement("dialog");
-  noteDialogDiv.className = "addNote";
-  noteDialogDiv.classList.add("renameNote");
+  noteDialogDiv.classList.add("addNote", "renameNote");
   noteDialogDiv.appendChild(
     Object.assign(document.createElement("form"), { method: "dialog" })
   );
@@ -188,47 +189,53 @@ function addNoteDiv(title, desc, due, prio) {
 
   renameNoteActions.children[0].addEventListener("click", (e) => {
     e.preventDefault();
-    if (check.test(noteDialogDiv.children[0].children[0].value)) {
+    if (
+      check.test(noteDialogDiv.children[0].children[0].value) &&
+      !library
+        .targetProject(activeProject)
+        .showNotes()
+        .includes(noteDialogDiv.children[0].children[0].value)
+    ) {
       noteDialogDiv.close([
         noteDialogDiv.children[0].children[0].value,
         noteDialogDiv.children[0].children[1].value,
         noteDialogDiv.children[0].children[2].children[1].value,
       ]);
+
+      let tempNoteArr = noteDialogDiv.returnValue.split(",");
+      if (tempNoteArr.length > 3) {
+        const len = tempNoteArr.slice(1, -1);
+        tempNoteArr.splice(2, len.length - 1);
+        tempNoteArr[1] = len.join(", ");
+      }
+
+      library
+        .targetProject(activeProject)
+        .targetNote(noteContentDiv.children[0].firstChild.textContent)
+        .renameNote(tempNoteArr[0]);
+      library
+        .targetProject(activeProject)
+        .targetNote(tempNoteArr[0])
+        .changeDesc(tempNoteArr[1]);
+      library
+        .targetProject(activeProject)
+        .targetNote(tempNoteArr[0])
+        .changeDue(tempNoteArr[2]);
+
+      const currentNote = library
+        .targetProject(activeProject)
+        .targetNote(tempNoteArr[0]);
+
+      localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
+
+      noteContentDiv.children[0].firstChild.textContent = currentNote.title;
+      if (currentNote.desc === "") {
+        description.firstChild.textContent = "No description";
+      } else {
+        description.firstChild.textContent = currentNote.desc;
+      }
+      dueDate.textContent = formatter(currentNote._due);
     }
-
-    let tempNoteArr = noteDialogDiv.returnValue.split(",");
-    if (tempNoteArr.length > 3) {
-      const len = tempNoteArr.slice(1, -1);
-      tempNoteArr.splice(2, len.length - 1);
-      tempNoteArr[1] = len.join(", ");
-    }
-
-    library
-      .targetProject(activeProject)
-      .targetNote(noteContentDiv.children[0].firstChild.textContent)
-      .renameNote(tempNoteArr[0]);
-    library
-      .targetProject(activeProject)
-      .targetNote(tempNoteArr[0])
-      .changeDesc(tempNoteArr[1]);
-    library
-      .targetProject(activeProject)
-      .targetNote(tempNoteArr[0])
-      .changeDue(tempNoteArr[2]);
-
-    const currentNote = library
-      .targetProject(activeProject)
-      .targetNote(tempNoteArr[0]);
-
-    localStorage.setItem("libraryArray", JSON.stringify(library.libraryList));
-
-    noteContentDiv.children[0].firstChild.textContent = currentNote.title;
-    if (currentNote.desc === "") {
-      description.firstChild.textContent = "No description";
-    } else {
-      description.firstChild.textContent = currentNote.desc;
-    }
-    dueDate.textContent = formatter(currentNote._due);
   });
 
   renameNoteActions.children[1].addEventListener("click", (e) => {
@@ -913,5 +920,27 @@ noteDialog.addEventListener("keydown", (e) => {
       );
     }
     noteDialog.children[0].children[0].focus();
+  }
+});
+
+projectSearch.addEventListener("input", (e) => {
+  const value = e.target.value.toLowerCase();
+
+  for (const project of library.libraryList) {
+    const index = library.projectIndex(project.name);
+    const visible = project.name.toLowerCase().includes(value);
+    libraryDiv.children[index].classList.toggle("display", !visible);
+  }
+});
+
+noteSearch.addEventListener("input", (e) => {
+  const value = e.target.value.toLowerCase();
+  let add = 1;
+
+  for (const note of library.targetProject(activeProject).notes) {
+    const index = library.targetProject(activeProject).noteIndex(note.title);
+    const visible = note.title.toLowerCase().includes(value);
+    noteDiv.children[index + add].classList.toggle("display", !visible);
+    add++;
   }
 });

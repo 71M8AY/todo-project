@@ -19,7 +19,6 @@ export const library = (function Library() {
         }
       }
     }
-    console.log(library.libraryList);
   });
 
   const addProject = (item) => {
@@ -37,6 +36,11 @@ export const library = (function Library() {
     return libraryList[index];
   };
 
+  const projectIndex = (projectName) => {
+    const index = libraryList.findIndex((item) => item.name === projectName);
+    return index;
+  };
+
   const displayLibraryList = () => {
     let nameArray = libraryList.map((prj) => prj.name);
     return nameArray;
@@ -46,6 +50,7 @@ export const library = (function Library() {
     addProject,
     removeProject,
     targetProject,
+    projectIndex,
     displayLibraryList,
     libraryList,
   };
